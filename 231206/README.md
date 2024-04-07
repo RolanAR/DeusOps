@@ -95,3 +95,21 @@ files_instance_count = 2
 ## Подключение к серверам по SSH
 
 ssh -i /path/to/ansible/ssh_key/id_rsa ubuntu@your_server_ip
+
+
+Ансибл сборка
+
+Установка и настройка NFS-сервера:
+ansible/roles/nfs/tasks/NFS_server.yml
+
+Установка и настройка NFS-клиента:
+ansible/roles/nfs/tasks/NFS_client.yml
+
+Установка и настройка NGINX в качестве прокси:
+ansible/roles/nginx/tasks/NGINX_as_proxy.yml
+
+Установка Django:
+ansible/roles/django/tasks/install_django.yml
+
+запуск Django-приложения:
+ansible/roles/django/tasks/run_django.yml

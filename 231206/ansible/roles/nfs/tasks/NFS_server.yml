@@ -1,0 +1,112 @@
+---
+- name: Update all packages
+  apt:
+    update_cache: yes
+- name: Install NFS server packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - nfs-kernel-server
+    - rpcbind
+  become: yes
+
+- name: Create directory to export
+  file:
+    path: /files
+    state: directory
+  become: yes
+
+- name: Configure NFS exports
+  lineinfile:
+    path: /etc/exports
+    line: "/files *(rw,sync,no_subtree_check)"
+    state: present
+    insertafter: EOF
+  become: yes
+
+- name: Restart NFS server
+  service:
+    name: nfs-kernel-server
+    state: restarted
+  become: yes
+
+
+
+# ---
+# - name: Update all packages
+#   apt:
+#     update_cache: yes
+
+# - name: Install NFS server package
+#   apt: 
+#     name: nfs-kernel-server
+#     state: present
+
+# - name: Create a directory to share
+#   file:
+#     path: /files
+#     state: directory
+#     mode: '777'
+#     owner: nobody
+#     group: nogroup
+
+# - name: Add the directory to the NFS configuration file
+#   lineinfile:
+#     path: /etc/exports
+#     line: '/files *(rw,sync,no_subtree_check,no_root_squash)'
+#     state: present
+
+# - name: Export the shared directory and restart NFS service
+#   command:
+#     cmd: exportfs -a && systemctl restart nfs-kernel-server
+
+
+# ---
+# - name: Update package cache
+#   apt:
+#     update_cache: yes
+
+# - name: Установка пакетов nfs-utils
+#   package:
+#     name: nfs-kernel-server
+#     state: present
+
+# - name: Создание директории для экспорта
+#   file:
+#     path: /files
+#     state: directory
+#     mode: "0755"
+
+# - name: Настройка /etc/exports для экспорта директории /files
+#   lineinfile:
+#     path: /etc/exports
+#     line: "/files *(rw,sync,no_root_squash,no_subtree_check)"
+#     state: present
+#   notify:
+#     - restart nfs-server
+
+# - name: Restart nfs-server service
+#   service:
+#     name: nfs-server
+#     state: restarted
+
+
+
+# - name: Install NFS server package    # Устанавливаем пакет NFS-сервера
+#   package:
+#     name: nfs-kernel-server          # Имя пакета NFS-сервера
+#     state: present                   # Указываем, что пакет должен быть установлен
+# - name: Create directory for NFS export     # Создаем директорию для экспорта по NFS
+#   file:
+#     path: /files                   # Путь к директории
+#     state: directory               # Указываем, что это директория
+# - name: Configure NFS export      # Настраиваем экспорт NFS
+#   lineinfile:
+#     path: /etc/exports           # Путь к файлу настроек экспорта
+#     line: '/files *(rw,sync,no_subtree_check,no_root_squash)'  # Строка настроек экспорта
+#     create: yes                 # Создаем файл, если он не существует
+# - name: Restart NFS server      # Перезапускаем службу NFS
+#   service:
+#     name: nfs-kernel-server    # Имя службы NFS
+#     state: restarted           # Указываем, что служба должна быть перезапущена после изменений

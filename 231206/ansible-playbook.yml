@@ -1,0 +1,33 @@
+---
+- name: Run main tasks on files hosts
+  hosts: files
+  become: true
+  roles:
+    - role: ./ansible/roles/nfs
+      tags:
+        - nfs_server
+
+- name: Run tasks on web hosts
+  hosts: web
+  become: true
+  roles:
+    - role: ./ansible/roles/nfs
+      tags:
+        - nfs_client
+
+- name: Deploy NGINX, Django, and NFS configurations
+  hosts: web01
+  become: yes
+  tasks:
+    - name: Include nginx_proxy role
+      include_role:
+        name: nginx_proxy
+
+    - name: Include django_app role
+      include_role:
+        name: django_app
+
+    - name: Include nfs_web_files role
+      include_role:
+        name: nfs_web_files
+

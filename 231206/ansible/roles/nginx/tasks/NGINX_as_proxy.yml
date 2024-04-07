@@ -1,0 +1,27 @@
+---
+- name: Install and configure NGINX as proxy
+  hosts: web01
+  become: yes
+
+  tasks:
+    - name: Install NGINX package
+      package:
+        name: nginx
+        state: present
+
+    - name: Remove default NGINX site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Configure NGINX as proxy
+      template:
+        src: files/nginx_proxy.conf.j2
+        dest: /etc/nginx/sites-available/proxy.conf
+      notify: Reload NGINX
+
+  handlers:
+    - name: Reload NGINX
+      service:
+        name: nginx
+        state: reloaded

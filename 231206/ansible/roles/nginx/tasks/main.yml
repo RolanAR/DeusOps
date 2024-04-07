@@ -1,10 +1,11 @@
-# Main nginx tasks file
-- name: Ubuntu tasks
-  include_tasks: "ubuntu.yml"
-  when: ansible_os_family == "Debian"
+---
+- name: Install NGINX
+  apt:
+    name: nginx
+    state: present
 
-- name: Centos tasks
-  include_tasks: "centos.yml"
-  when: ansible_os_family == "RedHat"
-
-
+- name: Copy NGINX configuration file
+  template:
+    src: nginx_proxy.conf.j2
+    dest: /etc/nginx/sites-available/default
+  notify: Reload NGINX

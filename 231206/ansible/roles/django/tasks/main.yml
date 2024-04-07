@@ -1,0 +1,14 @@
+---
+- name: Install Django
+  pip:
+    name: django
+
+- name: Clone Django application repository
+  git:
+    repo: https://gitfront.io/r/deusops/BC6tmrogTrbh/django-filesharing/
+    dest: /opt/django-filesharing
+
+- name: Run Django application
+  command: python3 /opt/django-filesharing/manage.py runserver 0.0.0.0:8000
+  async: 0
+  poll: 0

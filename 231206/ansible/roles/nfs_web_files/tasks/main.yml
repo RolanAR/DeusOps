@@ -1,0 +1,8 @@
+---
+- name: Mount NFS share to web server
+  mount:
+    path: /mnt/nfs
+    src: "{{ hostvars['files01']['ansible_host'] }}:/files"
+    fstype: nfs
+    opts: rw
+    state: mounted

@@ -1,0 +1,23 @@
+---
+- name: Update package cache
+  apt:
+    update_cache: yes
+# Устанавливаем пакет nfs-common
+- name: Install NFS client package
+  package:
+    name: nfs-common
+    state: present  # Указываем, что пакет должен быть установлен
+# Создаем точку монтирования для NFS
+- name: Create mount point for NFS
+  file:
+    path: /mnt/nfs  # Путь к точке монтирования
+    state: directory  # Создаем директорию
+# Монтируем NFS шару
+# - name: Mount NFS share
+#   mount:
+#     path: /mnt/nfs  # Путь к точке монтирования
+#     src: "{{ hostvars['files01']['ansible_host'] }}:/files"  # Подстановка IP и пути к шаре
+#     fstype: nfs  # Тип файловой системы NFS
+#     opts: rw  # Опции монтирования (в данном случае, чтение и запись)
+#     state: mounted  # Состояние монтирования (монтируем)
+
