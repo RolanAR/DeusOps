@@ -1,0 +1,48 @@
+- name: Check if version of php exists
+  ansible.builtin.fail:
+    msg: "The php of {{php_version}} doesn't exist"
+  when: php_version > 8.0
+
+- name: "Add repo for php"
+  ansible.builtin.apt_repository:
+    repo: 'ppa:ondrej/php'
+    update_cache: true
+
+- name: "Install php mysql and php fpm"
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: latest
+  with_items:
+    - "php{{php_version}}-fpm"
+    - "php{{php_version}}-mysql"
+
+- name: "Check if we are having nginx directories"
+  stat:
+    path: /etc/nginx/sites-available
+  register: php_sites_available_stats
+
+- name: "Copy php files to the separate folder"
+  ansible.builtin.copy:
+    src: files/test-php/php_test
+    dest: /var/www/
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+  when: php_sites_available_stats.stat.exists
+
+- name: "Copy nginx config"
+  ansible.builtin.template:
+    src: templates/nginx.conf.j2
+    dest: /etc/nginx/sites-available/php-test.conf
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+  when: php_sites_available_stats.stat.exists
+
+- name: "Create a symlink for a new website"
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/php-test.conf"
+    dest: "/etc/nginx/sites-enabled/php-test.conf"
+    state: link
+  when: php_sites_available_stats.stat.exists

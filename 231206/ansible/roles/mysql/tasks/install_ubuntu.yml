@@ -1,0 +1,19 @@
+- name: "Install mysql"
+  ansible.builtin.apt:
+    name: mysql-server
+    update_cache: yes
+    state: latest
+
+- name: "Installing Pymysql for python related modules"
+  ansible.builtin.apt:
+    name: python3-pymysql
+    update_cache: yes
+    state: latest
+
+- name: "Set the root password"
+  community.mysql.mysql_user:
+    name: "root"
+    password: "password"
+    login_password: "password"
+    check_implicit_admin: true
+    login_unix_socket: /var/run/mysqld/mysqld.sock

@@ -1,0 +1,20 @@
+##################################################
+# LEMP on Ubuntu 20.04
+##################################################
+---
+- name: Basic group
+  hosts: centos:ubuntu
+  become: true
+  vars:
+    test_var: test
+    php_version: 7.3
+  roles:
+    - nginx
+    - mysql
+    - php
+
+  tasks:
+  - name: "Reload nginx"
+    service:
+      name: nginx
+      state: reloaded

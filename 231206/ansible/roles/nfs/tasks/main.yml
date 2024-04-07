@@ -1,0 +1,26 @@
+---
+- name: Install and configure NFS server
+  hosts: files01           # Указываем хост, на котором будет установлен NFS-сервер
+  become: yes             # Делаем пользователя root для выполнения задач
+
+  tasks:
+    - name: Install NFS server package    # Устанавливаем пакет NFS-сервера
+      package:
+        name: nfs-kernel-server          # Имя пакета NFS-сервера
+        state: present                   # Указываем, что пакет должен быть установлен
+
+    - name: Create directory for NFS export     # Создаем директорию для экспорта по NFS
+      file:
+        path: /files                   # Путь к директории
+        state: directory               # Указываем, что это директория
+
+    - name: Configure NFS export      # Настраиваем экспорт NFS
+      lineinfile:
+        path: /etc/exports           # Путь к файлу настроек экспорта
+        line: '/files *(rw,sync,no_subtree_check,no_root_squash)'  # Строка настроек экспорта
+        create: yes                 # Создаем файл, если он не существует
+
+    - name: Restart NFS server      # Перезапускаем службу NFS
+      service:
+        name: nfs-kernel-server    # Имя службы NFS
+        state: restarted           # Указываем, что служба должна быть перезапущена после изменений

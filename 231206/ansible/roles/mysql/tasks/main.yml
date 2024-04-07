@@ -1,0 +1,25 @@
+- name: Ubuntu install
+  include_tasks: "install_ubuntu.yml"
+  when: ansible_os_family == "Debian"
+
+- name: Centos install
+  include_tasks: "install_centos.yml"
+  when: ansible_os_family == "RedHat"
+
+- name: "Remove all anonymous user accounts"
+  community.mysql.mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: "password"
+    check_implicit_admin: true
+
+- name: "Remove the MySQL test database"
+  community.mysql.mysql_db:
+    name: test
+    state: absent
+    login_user: root
+    login_password: "password"
+    check_implicit_admin: true
+

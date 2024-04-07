@@ -1,0 +1,63 @@
+- name: Check if version of php exists
+  fail:
+    msg: The php of {{php_version}} doesn't exist
+  when: php_version > 8.0
+
+
+- name: "Add repo for php"
+  ansible.builtin.yum:
+    name: http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+    update_cache: yes
+    state: latest
+
+
+- name: "Install php mysql and php fpm"
+  ansible.builtin.yum:
+    name: "{{ item }}"
+    disablerepo: "remi-php54"
+    enablerepo:
+      - remi
+      - remi-php{{php_version | replace(".","")}}
+    update_cache: yes
+    state: latest
+  with_items:
+    - "php"
+    - "php-cli"
+    - "php-fpm"
+    - "php-mysql"
+
+- name: "Check if we are having nginx directories"
+  stat:
+    path: /etc/nginx/conf.d/
+  register: php_sites_available_stats
+
+- name: "Copy php files to the separate folder"
+  ansible.builtin.copy:
+    src: files/test-php/php_test
+    dest: /var/www/
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+  when: php_sites_available_stats["stat"]["exists"]
+
+- name: "Copy php config"
+  ansible.builtin.copy:
+    src: files/www.conf
+    dest: /etc/php-fpm.d/www.conf
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+
+- name: "Copy nginx config"
+  ansible.builtin.template:
+    src: nginx.centos.conf.j2
+    dest: /etc/nginx/conf.d/php-test.conf
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+  when: php_sites_available_stats.stat.exists
+
+- name: "Restart fpm"
+  service:
+    name: php-fpm
+    state: reloaded

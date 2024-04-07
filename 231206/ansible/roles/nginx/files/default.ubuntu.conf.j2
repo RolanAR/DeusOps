@@ -1,0 +1,19 @@
+server {
+        listen {{nginx_port}};
+        # В ubuntu указываем такой путь до сайта
+        root /var/www/html;
+
+        # Add index.php to the list if you are using PHP
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+
+        location ~ /\.ht {
+                deny all;
+        }
+}

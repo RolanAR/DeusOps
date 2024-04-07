@@ -1,0 +1,19 @@
+server {
+        listen {{php_nginx_port}};
+        root /var/www/php_test;
+        index index.php index.html index.htm index.nginx-debian.html;
+        server_name php-test.com;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+
+        location ~ \.php$ {
+                include snippets/fastcgi-php.conf;
+                fastcgi_pass unix:/var/run/php/php{{ php_version }}-fpm.sock;
+        }
+
+        location ~ /\.ht {
+                deny all;
+        }
+}
