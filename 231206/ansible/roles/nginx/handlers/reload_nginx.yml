@@ -1,6 +1,6 @@
 # roles/nginx/handlers/restart_nginx.yml
 
-- name: Restart NGINX
+- name: Reload NGINX
   service:
     name: nginx
     state: restarted

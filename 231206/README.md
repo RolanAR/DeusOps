@@ -113,3 +113,27 @@ ansible/roles/django/tasks/install_django.yml
 
 запуск Django-приложения:
 ansible/roles/django/tasks/run_django.yml
+
+## запуск джанго приложения
+установка 
+sudo apt update
+git clone https://gitfront.io/r/deusops/BC6tmrogTrbh/django-filesharing.git
+sudo apt install python3 -y
+sudo apt install python3-pip -y
+pip install django
+pip install -r requirements.txt
+sudo apt install gunicorn
+
+python3 manage.py migrate
+
+settings.py добавить строку
+ALLOWED_HOSTS = ['192.168.0.112']
+python3 manage.py runserver 0.0.0.0:8000
+
+python3 manage.py collectstatic
+
+Nginx
+
+sudo apt update
+sudo apt install nginx
+sudo nano /etc/nginx/sites-available/myproject
